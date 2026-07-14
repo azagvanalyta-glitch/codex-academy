@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UniPlayer – Online + Local Video Player</title>
+    <style>
+        /* ── Reset & Base ── */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0b0b12;
+            color: #eaeef2;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .player-container {
+            width: 100%;
+            max-width: 1040px;
+            background: rgba(18, 20, 30, 0.75);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 40px;
+            padding: 30px 32px 28px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            background: linear-gradient(145deg, #7c4dff, #536dfe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 6px 18px rgba(83, 109, 254, 0.35);
+        }
+        .brand h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #f0f4ff 0%, #b0c4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .brand span {
+            font-weight: 400;
+            font-size: 14px;
+            color: #8892b0;
+            -webkit-text-fill-color: #8892b0;
+            background: none;
+            margin-left: 4px;
+        }
+        .platform-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 16px 6px 12px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 13px;
+            color: #a8b2d1;
+        }
+        .platform-badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            background: #4ade80;
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(0.85);
+            }
+        }
+
+        /* ── Video Wrapper ── */
+        .video-wrapper {
+            position: relative;
+            background: #0a0a12;
+            border-radius: 24px;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+            box-shadow: inset 0 2px 20px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .video-wrapper iframe,
+        .video-wrapper video {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            background: #0a0a12;
+        }
+        .video-wrapper video {
+            object-fit: contain;
+            background: #0a0a12;
+        }
+        .video-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at center, #141625 0%, #07080e 100%);
+            color: #5a6488;
+            text-align: center;
+            padding: 30px;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+        .video-placeholder.hidden {
+            opacity: 0;
+        }
+        .video-placeholder .big-icon {
+            font-size: 64px;
+            margin-bottom: 18px;
+            opacity: 0.5;
+            filter: grayscale(0.4);
+        }
+        .video-placeholder h3 {
+            font-size: 20px;
+            font-weight: 500;
+            color: #c8d0e6;
+            margin-bottom: 6px;
+        }
+        .video-placeholder p {
+            font-size: 14px;
+            color: #5a6488;
+            max-width: 340px;
+            line-height: 1.6;
+        }
+        .video-wrapper .media-hidden {
+            display: none !important;
+        }
+
+        /* ── URL Bar ── */
+        .url-section {
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .url-input-wrap {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+        .url-input-wrap input {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            background: rgba(255, 255, 255, 0.04);
+            color: #eaeef2;
+            font-size: 15px;
+            font-weight: 400;
+            outline: none;
+            transition: all 0.25s ease;
+            font-family: inherit;
+            backdrop-filter: blur(4px);
+        }
+        .url-input-wrap input::placeholder {
+            color: #4a5478;
+            font-weight: 350;
+        }
+        .url-input-wrap input:focus {
+            border-color: #7c4dff;
+            background: rgba(124, 77, 255, 0.06);
+            box-shadow: 0 0 0 4px rgba(124, 77, 255, 0.08);
+        }
+        .url-input-wrap .platform-hint {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            font-weight: 500;
+            color: #4a5478;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 2px 12px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .url-input-wrap .platform-hint.show {
+            opacity: 1;
+        }
+        .btn-play {
+            padding: 14px 32px;
+            border-radius: 18px;
+            border: none;
+            background: linear-gradient(145deg, #7c4dff, #536dfe);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            box-shadow: 0 6px 24px rgba(83, 109, 254, 0.25);
+            font-family: inherit;
+        }
+        .btn-play:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px rgba(83, 109, 254, 0.35);
+        }
+        .btn-play:active {
+            transform: translateY(0px);
+            box-shadow: 0 4px 16px rgba(83, 109, 254, 0.25);
+        }
+        .btn-play svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        /* ── Local Video Buttons ── */
+        .local-section {
+            margin-top: 22px;
+        }
+        .local-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #5a6488;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .local-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .local-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .local-chip {
+            padding: 8px 18px;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 13px;
+            color: #a8b2d1;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .local-chip:hover {
+            background: rgba(124, 77, 255, 0.12);
+            border-color: rgba(124, 77, 255, 0.2);
+            color: #eaeef2;
+            transform: translateY(-1px);
+        }
+        .local-chip .chip-icon {
+            font-size: 16px;
+        }
+
+        /* ── Info Bar ── */
+        .info-bar {
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 13px;
+            color: #5a6488;
+            min-height: 28px;
+        }
+        .info-bar .video-title {
+            color: #c8d0e6;
+            font-weight: 450;
+            max-width: 60%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .info-bar .video-title .sep {
+            color: #3a4468;
+            margin: 0 6px;
+        }
+        .info-bar .video-title .platform-tag {
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 2px 10px;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            color: #7c8ab0;
+        }
+        .info-bar .right-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .info-bar .status {
+            color: #4a5478;
+            font-size: 12px;
+        }
+        .download-btn {
+            background: none;
+            border: none;
+            color: #7c8ab0;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-family: inherit;
+        }
+        .download-btn:hover {
+            color: #c8d0e6;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .download-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+        .download-btn .label {
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 700px) {
+            .player-container {
+                padding: 18px 16px 20px;
+                border-radius: 28px;
+            }
+            .brand h1 {
+                font-size: 18px;
+            }
+            .brand span {
+                font-size: 12px;
+            }
+            .brand-icon {
+                width: 34px;
+                height: 34px;
+                font-size: 16px;
+            }
+            .video-placeholder .big-icon {
+                font-size: 44px;
+            }
+            .video-placeholder h3 {
+                font-size: 17px;
+            }
+            .url-section {
+                flex-direction: column;
+            }
+            .btn-play {
+                justify-content: center;
+                padding: 14px 20px;
+            }
+            .local-grid {
+                gap: 6px;
+            }
+            .local-chip {
+                font-size: 12px;
+                padding: 6px 14px;
+            }
+            .info-bar {
+                font-size: 12px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            .info-bar .video-title {
+                max-width: 100%;
+                white-space: normal;
+            }
+            .platform-badge {
+                font-size: 11px;
+                padding: 4px 12px;
+            }
+            .info-bar .right-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+        @media (max-width: 420px) {
+            .player-container {
+                padding: 12px 10px 16px;
+                border-radius: 20px;
+            }
+            .header {
+                margin-bottom: 14px;
+            }
+            .brand h1 {
+                font-size: 16px;
+            }
+            .url-input-wrap input {
+                font-size: 14px;
+                padding: 12px 14px;
+            }
+            .btn-play {
+                font-size: 14px;
+                padding: 12px 16px;
+            }
+        }
+
+        /* ── Utilities ── */
+        .hidden {
+            display: none !important;
+        }
+        .fade-in {
+            animation: fadeIn 0.35s ease;
+        }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a3050;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3a4470;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="player-container">
+
+        <!-- ─── HEADER ─── -->
+        <header class="header">
+            <div class="brand">
+                <div class="brand-icon">▶</div>
+                <h1>UniPlayer <span>· online + local</span></h1>
+            </div>
+            <div class="platform-badge">
+                <span class="dot"></span>
+                <span id="activePlatformLabel">Ready</span>
+            </div>
+        </header>
+
+        <!-- ─── VIDEO WRAPPER ─── -->
+        <div class="video-wrapper" id="videoWrapper">
+            <!-- Online iframe -->
+            <iframe id="videoIframe" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen class="media-hidden"></iframe>
+            <!-- Local video -->
+            <video id="localVideo" controls class="media-hidden" preload="metadata"></video>
+            <!-- Placeholder -->
+            <div class="video-placeholder" id="placeholder">
+                <div class="big-icon">🎬</div>
+                <h3>Paste a link or choose a local video</h3>
+                <p>Supports YouTube, Facebook, TikTok, Vimeo, Dailymotion &amp; local MP4/WebM</p>
+            </div>
+        </div>
+
+        <!-- ─── ONLINE URL INPUT ─── -->
+        <div class="url-section">
+            <div class="url-input-wrap">
+                <input type="text" id="urlInput" placeholder="Paste online video URL here…" spellcheck="false" autofocus />
+                <span class="platform-hint" id="platformHint">🔍</span>
+            </div>
+            <button class="btn-play" id="playBtn">
+                <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+                Play Online
+            </button>
+        </div>
+
+        <!-- ─── LOCAL VIDEO BUTTONS ─── -->
+        <div class="local-section">
+            <div class="local-label">📁 Local videos (from <code>videos/</code> folder)</div>
+            <div class="local-grid" id="localGrid">
+                <!-- filled by JS -->
+            </div>
+        </div>
+
+        <!-- ─── INFO BAR ─── -->
+        <div class="info-bar" id="infoBar">
+            <span class="video-title" id="videoTitle">
+                <span class="platform-tag" id="platformTag">—</span>
+                <span class="sep">·</span>
+                <span id="titleText">Choose a video</span>
+            </span>
+            <div class="right-group">
+                <span class="status" id="statusText">✨ ready</span>
+                <button class="download-btn" id="downloadBtn" title="Download current video">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/><path d="M12 15l-4-4h2.5V8h3v3H16l-4 4z"/><path d="M8 17h8v1.5H8V17z"/></svg>
+                    <span class="label">Download</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  CONFIG – LOCAL VIDEOS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        const LOCAL_VIDEOS = [
+            { label: 'Video 1', file: 'videos/video_1.mp4', icon: '🎞️' },
+            { label: 'Video 2', file: 'videos/video_2.mp4', icon: '🎥' },
+            // Add more as needed
+        ];
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  DOM REFS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        const iframe = document.getElementById('videoIframe');
+        const localVideo = document.getElementById('localVideo');
+        const placeholder = document.getElementById('placeholder');
+        const urlInput = document.getElementById('urlInput');
+        const playBtn = document.getElementById('playBtn');
+        const platformHint = document.getElementById('platformHint');
+        const platformTag = document.getElementById('platformTag');
+        const titleText = document.getElementById('titleText');
+        const statusText = document.getElementById('statusText');
+        const activePlatformLabel = document.getElementById('activePlatformLabel');
+        const localGrid = document.getElementById('localGrid');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  STATE
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        let currentVideoType = null; // 'local' or 'online'
+        let currentVideoSource = null; // file path or original URL
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  PLATFORM DETECTION (online)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function detectPlatform(url) {
+            if (!url) return null;
+            const u = url.trim();
+            if (/youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\//.test(u)) return 'youtube';
+            if (/facebook\.com\/.*\/videos\//.test(u) || /fb\.watch/.test(u)) return 'facebook';
+            if (/tiktok\.com\/@[\w.-]+\/video\/\d+/.test(u) || /tiktok\.com\/embed/.test(u)) return 'tiktok';
+            if (/vimeo\.com\/(\d+)/.test(u)) return 'vimeo';
+            if (/dailymotion\.com\/video\//.test(u) || /dai\.ly/.test(u)) return 'dailymotion';
+            return null;
+        }
+
+        function extractVideoId(url, platform) {
+            const u = url.trim();
+            switch (platform) {
+                case 'youtube': {
+                    let id = null;
+                    const m1 = u.match(/[?&]v=([^&]+)/);
+                    if (m1) id = m1[1];
+                    const m2 = u.match(/youtu\.be\/([^?&]+)/);
+                    if (m2) id = m2[1];
+                    const m3 = u.match(/youtube\.com\/embed\/([^?&]+)/);
+                    if (m3) id = m3[1];
+                    const m4 = u.match(/youtube\.com\/shorts\/([^?&]+)/);
+                    if (m4) id = m4[1];
+                    return id;
+                }
+                case 'facebook': {
+                    const m = u.match(/\/videos\/(\d+)/);
+                    if (m) return m[1];
+                    const m2 = u.match(/watch\/(\d+)/);
+                    if (m2) return m2[1];
+                    return u;
+                }
+                case 'tiktok': {
+                    const m = u.match(/\/video\/(\d+)/);
+                    if (m) return m[1];
+                    const m2 = u.match(/tiktok\.com\/embed\/(\d+)/);
+                    if (m2) return m2[1];
+                    return null;
+                }
+                case 'vimeo': {
+                    const m = u.match(/vimeo\.com\/(\d+)/);
+                    return m ? m[1] : null;
+                }
+                case 'dailymotion': {
+                    const m = u.match(/\/video\/([a-zA-Z0-9]+)/);
+                    if (m) return m[1];
+                    const m2 = u.match(/dai\.ly\/([a-zA-Z0-9]+)/);
+                    if (m2) return m2[1];
+                    return null;
+                }
+                default:
+                    return null;
+            }
+        }
+
+        function buildEmbedUrl(platform, videoId, originalUrl) {
+            switch (platform) {
+                case 'youtube':
+                    return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1`;
+                case 'facebook': {
+                    const href = encodeURIComponent(originalUrl.trim());
+                    return `https://www.facebook.com/plugins/video.php?href=${href}&show_text=0&width=100%`;
+                }
+                case 'tiktok':
+                    return `https://www.tiktok.com/embed/${videoId}`;
+                case 'vimeo':
+                    return `https://player.vimeo.com/video/${videoId}?autoplay=0&title=0&byline=0&portrait=0`;
+                case 'dailymotion':
+                    return `https://www.dailymotion.com/embed/video/${videoId}?autoplay=0`;
+                default:
+                    return null;
+            }
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  PLAYER ENGINE
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function showMedia(type) {
+            iframe.classList.add('media-hidden');
+            localVideo.classList.add('media-hidden');
+            placeholder.classList.remove('hidden');
+
+            if (type === 'iframe') {
+                iframe.classList.remove('media-hidden');
+                placeholder.classList.add('hidden');
+            } else if (type === 'video') {
+                localVideo.classList.remove('media-hidden');
+                placeholder.classList.add('hidden');
+            }
+        }
+
+        function setStatus(text, isError = false) {
+            statusText.innerHTML = text;
+            statusText.style.color = isError ? '#f87171' : '#4a5478';
+        }
+
+        function setPlatformLabel(label) {
+            activePlatformLabel.textContent = label;
+        }
+
+        function setTitle(platform, title) {
+            const platformNames = {
+                youtube: 'YouTube',
+                facebook: 'Facebook',
+                tiktok: 'TikTok',
+                vimeo: 'Vimeo',
+                dailymotion: 'Dailymotion',
+                local: 'Local'
+            };
+            const pName = platformNames[platform] || platform || '—';
+            platformTag.textContent = pName;
+            titleText.textContent = title || 'Untitled';
+            setPlatformLabel(pName);
+        }
+
+        // ── Play online video ──
+        function playOnline(url) {
+            if (!url || !url.trim()) {
+                setStatus('⚠️ Please paste a URL', true);
+                return;
+            }
+            const trimmed = url.trim();
+            const platform = detectPlatform(trimmed);
+            if (!platform) {
+                setStatus('❌ Unsupported platform. Try YouTube, Facebook, TikTok, Vimeo, or Dailymotion.', true);
+                showMedia(null);
+                iframe.src = '';
+                setTitle('—', 'Unsupported URL');
+                setPlatformLabel('⚠️ Unsupported');
+                currentVideoType = null;
+                currentVideoSource = null;
+                return;
+            }
+            const videoId = extractVideoId(trimmed, platform);
+            if (!videoId) {
+                setStatus('❌ Could not extract video ID from that URL.', true);
+                showMedia(null);
+                iframe.src = '';
+                setTitle(platform, 'Invalid URL');
+                setPlatformLabel(platform);
+                currentVideoType = null;
+                currentVideoSource = null;
+                return;
+            }
+            const embedUrl = buildEmbedUrl(platform, videoId, trimmed);
+            if (!embedUrl) {
+                setStatus('❌ Failed to build embed URL.', true);
+                showMedia(null);
+                iframe.src = '';
+                setTitle(platform, 'Embed error');
+                setPlatformLabel(platform);
+                currentVideoType = null;
+                currentVideoSource = null;
+                return;
+            }
+
+            // Stop local video
+            localVideo.pause();
+            localVideo.src = '';
+
+            // Load iframe
+            iframe.src = embedUrl;
+            showMedia('iframe');
+
+            const displayName = { youtube: 'YouTube', facebook: 'Facebook', tiktok: 'TikTok', vimeo: 'Vimeo',
+                dailymotion: 'Dailymotion' } [platform] || platform;
+            setTitle(platform, trimmed.length > 50 ? trimmed.slice(0, 50) + '…' : trimmed);
+            setPlatformLabel(displayName);
+            setStatus(`▶️ Playing online on ${displayName}`);
+            urlInput.value = trimmed;
+            platformHint.textContent = displayName;
+            platformHint.classList.add('show');
+
+            // Store for download
+            currentVideoType = 'online';
+            currentVideoSource = trimmed;
+        }
+
+        // ── Play local video ──
+        function playLocal(filePath, label) {
+            // Stop iframe
+            iframe.src = '';
+
+            // Set video source
+            localVideo.src = filePath;
+            localVideo.load();
+            showMedia('video');
+            localVideo.play().catch(() => { /* ignore autoplay restrictions */ });
+
+            setTitle('local', label || filePath.split('/').pop());
+            setPlatformLabel('Local');
+            setStatus(`▶️ Playing local: ${label || filePath}`);
+            urlInput.value = filePath;
+            platformHint.classList.remove('show');
+
+            // Store for download
+            currentVideoType = 'local';
+            currentVideoSource = filePath;
+        }
+
+        // ── Download handler ──
+        function handleDownload() {
+            if (!currentVideoSource) {
+                setStatus('⚠️ No video loaded to download.', true);
+                return;
+            }
+
+            if (currentVideoType === 'local') {
+                // Trigger download via anchor
+                const a = document.createElement('a');
+                a.href = currentVideoSource;
+                // Extract filename
+                const parts = currentVideoSource.split('/');
+                const filename = parts[parts.length - 1] || 'video.mp4';
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setStatus(`⬇️ Downloading ${filename}…`);
+            } else if (currentVideoType === 'online') {
+                // Open the original URL in a new tab
+                window.open(currentVideoSource, '_blank');
+                setStatus(`↗️ Opened online video in new tab`);
+            } else {
+                setStatus('⚠️ Unknown video type.', true);
+            }
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  EVENT BINDING
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        playBtn.addEventListener('click', () => playOnline(urlInput.value));
+
+        urlInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                playOnline(urlInput.value);
+            }
+        });
+
+        urlInput.addEventListener('input', () => {
+            const val = urlInput.value.trim();
+            if (val) {
+                const platform = detectPlatform(val);
+                if (platform) {
+                    const names = { youtube: 'YouTube', facebook: 'Facebook', tiktok: 'TikTok', vimeo: 'Vimeo',
+                        dailymotion: 'Dailymotion' };
+                    platformHint.textContent = names[platform] || '🔍';
+                    platformHint.classList.add('show');
+                } else {
+                    platformHint.classList.remove('show');
+                }
+            } else {
+                platformHint.classList.remove('show');
+            }
+        });
+
+        downloadBtn.addEventListener('click', handleDownload);
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  BUILD LOCAL VIDEO BUTTONS
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        LOCAL_VIDEOS.forEach(v => {
+            const chip = document.createElement('button');
+            chip.className = 'local-chip';
+            chip.innerHTML = `<span class="chip-icon">${v.icon || '🎬'}</span> ${v.label}`;
+            chip.addEventListener('click', () => playLocal(v.file, v.label));
+            localGrid.appendChild(chip);
+        });
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  INIT
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        showMedia(null);
+        setTitle('—', 'Choose a video');
+        setStatus('✨ ready');
+        currentVideoType = null;
+        currentVideoSource = null;
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  KEYBOARD SHORTCUT
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                playOnline(urlInput.value);
+            }
+        });
+
+        console.log('🎬 UniPlayer loaded — paste an online URL or click a local video. Download button available.');
+    </script>
+
+</body>
+</html>
