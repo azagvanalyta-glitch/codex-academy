@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CodeX Academy — Learn Today. Build Tomorrow.</title>
+    <meta name="description" content="Africa's leading technology academy. Learn software engineering, cybersecurity, AI, cloud computing and more." />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+
+    <!-- ===== FONTS ===== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ============================================================
+           CSS VARIABLES — Brand Colors & Theme
+           ============================================================ */
+        :root {
+            --primary: #0A66FF;
+            --primary-rgb: 10, 102, 255;
+            --secondary: #00F58C;
+            --secondary-rgb: 0, 245, 140;
+            --bg: #0B1124;
+            --surface: #1A2744;
+            --surface-light: #243456;
+            --text: #F0F4FF;
+            --text-muted: #8A9BC0;
+            --border: #2A3D66;
+            --danger: #FF6B35;
+            --success: #00FF41;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 60px rgba(10, 102, 255, 0.15);
+            --glass: rgba(26, 39, 68, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Light mode overrides */
+        [data-theme="light"] {
+            --bg: #F0F4FF;
+            --surface: #FFFFFF;
+            --surface-light: #E8EDF9;
+            --text: #0B1124;
+            --text-muted: #4A5A7A;
+            --border: #D0D9E8;
+            --glass: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(0, 0, 0, 0.06);
+            --shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+            --shadow-glow: 0 0 60px rgba(10, 102, 255, 0.08);
+        }
+
+        /* ============================================================
+           RESET & BASE
+           ============================================================ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background 0.4s, color 0.4s;
+            min-height: 100vh;
+        }
+
+        ::selection {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--surface);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        /* ============================================================
+           TYPOGRAPHY
+           ============================================================ */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        code,
+        pre,
+        .font-code {
+            font-family: 'Fira Code', 'JetBrains Mono', monospace;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        a:hover {
+            color: var(--secondary);
+        }
+
+        /* ============================================================
+           UTILITY
+           ============================================================ */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(20px) saturate(1.4);
+            -webkit-backdrop-filter: blur(20px) saturate(1.4);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 24px rgba(10, 102, 255, 0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px rgba(10, 102, 255, 0.5);
+            background: #1a75ff;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: #0B1124;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px rgba(0, 245, 140, 0.4);
+            background: #1aff9a;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .btn-ghost {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            border: 1px solid var(--glass-border);
+        }
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-sm {
+            padding: 10px 20px;
+            font-size: 0.875rem;
+        }
+        .btn-lg {
+            padding: 18px 44px;
+            font-size: 1.125rem;
+        }
+
+        /* ============================================================
+           NAVBAR
+           ============================================================ */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 16px 0;
+            transition: var(--transition);
+        }
+        .navbar.scrolled {
+            background: var(--glass);
+            backdrop-filter: blur(24px) saturate(1.6);
+            -webkit-backdrop-filter: blur(24px) saturate(1.6);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 10px 0;
+        }
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--text);
+            text-decoration: none;
+        }
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .logo span {
+            color: var(--secondary);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            list-style: none;
+        }
+        .nav-links a {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .nav-actions .btn {
+            padding: 10px 20px;
+            font-size: 0.875rem;
+        }
+
+        .theme-toggle {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            transform: rotate(15deg);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        /* ============================================================
+           HERO
+           ============================================================ */
+        .hero {
+            padding: 140px 0 80px;
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -20%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(10, 102, 255, 0.12), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 245, 140, 0.08), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px 6px 8px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+        .hero-badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--secondary);
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.8);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.8rem, 6vw, 4.8rem);
+            font-weight: 900;
+            line-height: 1.05;
+            margin-bottom: 20px;
+        }
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 520px;
+            margin-bottom: 32px;
+            line-height: 1.7;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+        }
+        .hero-stats .stat h3 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .hero-stats .stat p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* Hero visual */
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .hero-code-block {
+            width: 100%;
+            max-width: 560px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            box-shadow: var(--shadow), var(--shadow-glow);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-code-block .dots {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .hero-code-block .dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: block;
+        }
+        .hero-code-block .dots span:nth-child(1) {
+            background: #ff5f57;
+        }
+        .hero-code-block .dots span:nth-child(2) {
+            background: #ffbd2e;
+        }
+        .hero-code-block .dots span:nth-child(3) {
+            background: #28c840;
+        }
+
+        .hero-code-block pre {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            color: var(--text);
+            overflow-x: auto;
+        }
+        .hero-code-block .keyword {
+            color: #ff79c6;
+        }
+        .hero-code-block .string {
+            color: #f1fa8c;
+        }
+        .hero-code-block .comment {
+            color: #6272a4;
+        }
+        .hero-code-block .function {
+            color: #50fa7b;
+        }
+        .hero-code-block .variable {
+            color: #8be9fd;
+        }
+        .hero-code-block .number {
+            color: #bd93f9;
+        }
+
+        .floating-badge {
+            position: absolute;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: 12px 18px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
+            animation: float 6s ease-in-out infinite;
+        }
+        .floating-badge:nth-child(2) {
+            top: -20px;
+            right: -20px;
+            animation-delay: -2s;
+        }
+        .floating-badge:nth-child(3) {
+            bottom: -10px;
+            left: -30px;
+            animation-delay: -4s;
+        }
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* ============================================================
+           SECTION COMMON
+           ============================================================ */
+        section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+        .mx-auto {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ============================================================
+           FEATURES / CATEGORIES GRID
+           ============================================================ */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px 28px;
+            transition: var(--transition);
+            cursor: default;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+        }
+        .feature-card .icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: rgba(10, 102, 255, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin-bottom: 18px;
+            color: var(--primary);
+        }
+        .feature-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* ============================================================
+           COURSES
+           ============================================================ */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 28px;
+            margin-top: 48px;
+        }
+
+        .course-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        .course-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--primary);
+            box-shadow: 0 16px 56px rgba(0, 0, 0, 0.35);
+        }
+        .course-card .thumb {
+            height: 180px;
+            background: linear-gradient(135deg, var(--surface-light), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #fff;
+            position: relative;
+        }
+        .course-card .thumb .level {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 4px 14px;
+            border-radius: 50px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #fff;
+        }
+        .course-card .body {
+            padding: 24px;
+        }
+        .course-card .body h3 {
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+        }
+        .course-card .body p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        .course-card .meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        .course-card .meta .price {
+            font-weight: 700;
+            color: var(--secondary);
+            font-size: 1.1rem;
+        }
+
+        /* ============================================================
+           TESTIMONIALS
+           ============================================================ */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 28px;
+            margin-top: 48px;
+        }
+
+        .testimonial-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            transition: var(--transition);
+        }
+        .testimonial-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+        .testimonial-card .stars {
+            color: #fbbf24;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+        .testimonial-card blockquote {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+        .testimonial-card .author {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .testimonial-card .author .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+        .testimonial-card .author .info strong {
+            display: block;
+            font-size: 0.95rem;
+        }
+        .testimonial-card .author .info span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* ============================================================
+           CTA
+           ============================================================ */
+        .cta-section {
+            background: linear-gradient(135deg, var(--surface), var(--primary));
+            border-radius: var(--radius);
+            padding: 64px 48px;
+            margin: 40px 0;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 245, 140, 0.15), transparent 70%);
+            border-radius: 50%;
+        }
+        .cta-section h2 {
+            font-size: 2.4rem;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 2;
+        }
+        .cta-section p {
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 500px;
+            margin: 0 auto 28px;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 2;
+        }
+        .cta-section .btn {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 60px 0 32px;
+            margin-top: 40px;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .footer-brand p {
+            color: var(--text-muted);
+            max-width: 320px;
+            font-size: 0.95rem;
+            margin-top: 12px;
+            line-height: 1.7;
+        }
+        .footer-col h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .footer-col ul a {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        .footer-col ul a:hover {
+            color: var(--text);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border);
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .footer-bottom .socials {
+            display: flex;
+            gap: 16px;
+        }
+        .footer-bottom .socials a {
+            color: var(--text-muted);
+            transition: var(--transition);
+            font-size: 1.2rem;
+        }
+        .footer-bottom .socials a:hover {
+            color: var(--text);
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 1024px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .hero p {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .hero-actions {
+                justify-content: center;
+            }
+            .hero-stats {
+                justify-content: center;
+            }
+            .hero-visual {
+                order: -1;
+            }
+            .hero-code-block {
+                max-width: 100%;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+            .hero {
+                padding: 120px 0 60px;
+                min-height: auto;
+            }
+            .hero h1 {
+                font-size: 2.4rem;
+            }
+            .hero-stats {
+                gap: 24px;
+                flex-wrap: wrap;
+            }
+            .hero-stats .stat h3 {
+                font-size: 1.5rem;
+            }
+            .floating-badge {
+                display: none;
+            }
+            .features-grid,
+            .courses-grid,
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+            .cta-section {
+                padding: 40px 24px;
+            }
+            .cta-section h2 {
+                font-size: 1.8rem;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 16px;
+            }
+            .hero-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .hero-code-block pre {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* ============================================================
+           MOBILE NAV
+           ============================================================ */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg);
+            z-index: 999;
+            padding: 80px 24px 40px;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .mobile-nav.open {
+            display: flex;
+        }
+        .mobile-nav a {
+            padding: 14px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text);
+            transition: var(--transition);
+        }
+        .mobile-nav a:hover {
+            background: var(--surface);
+        }
+        .mobile-nav .btn {
+            margin-top: 16px;
+            justify-content: center;
+        }
+        .mobile-close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 2rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================================
+    NAVBAR
+    ============================================================ -->
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+        <div class="container">
+            <a href="#" class="logo" aria-label="CodeX Academy Home">
+                <span class="logo-icon">&lt;/&gt;</span>
+                Code<span>X</span>
+            </a>
+
+            <ul class="nav-links" role="menubar">
+                <li role="none"><a href="#" role="menuitem" class="active">Home</a></li>
+                <li role="none"><a href="#courses" role="menuitem">Courses</a></li>
+                <li role="none"><a href="#features" role="menuitem">Features</a></li>
+                <li role="none"><a href="#testimonials" role="menuitem">Testimonials</a></li>
+                <li role="none"><a href="#cta" role="menuitem">Pricing</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    🌙
+                </button>
+                <a href="#" class="btn btn-ghost btn-sm">Log In</a>
+                <a href="#" class="btn btn-primary btn-sm">Get Started</a>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle mobile menu">
+                    ☰
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================================
+    MOBILE NAV
+    ============================================================ -->
+    <div class="mobile-nav" id="mobileNav" role="navigation" aria-label="Mobile navigation">
+        <button class="mobile-close" id="mobileCloseBtn" aria-label="Close menu">✕</button>
+        <a href="#">Home</a>
+        <a href="#courses">Courses</a>
+        <a href="#features">Features</a>
+        <a href="#testimonials">Testimonials</a>
+        <a href="#cta">Pricing</a>
+        <a href="#" class="btn btn-ghost">Log In</a>
+        <a href="#" class="btn btn-primary">Get Started</a>
+    </div>
+
+    <!-- ============================================================
+    HERO
+    ============================================================ -->
+    <header class="hero" id="home">
+        <div class="container">
+            <div class="hero-grid">
+                <!-- Left -->
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="dot"></span>
+                        Now enrolling — 2,000+ students
+                    </div>
+                    <h1>
+                        Learn Today.<br />
+                        <span class="highlight">Build Tomorrow.</span>
+                    </h1>
+                    <p>
+                        Africa's leading technology academy. Master software engineering,
+                        cybersecurity, AI, cloud computing &amp; more — with project-based
+                        learning and an AI mentor by your side.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="#" class="btn btn-primary btn-lg">Start Learning Free</a>
+                        <a href="#courses" class="btn btn-outline btn-lg">Browse Courses</a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <h3>200+</h3>
+                            <p>Courses</p>
+                        </div>
+                        <div class="stat">
+                            <h3>50K+</h3>
+                            <p>Students</p>
+                        </div>
+                        <div class="stat">
+                            <h3>96%</h3>
+                            <p>Job Placement</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right — Code Block -->
+                <div class="hero-visual">
+                    <div class="hero-code-block">
+                        <div class="dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <pre><span class="comment">// Welcome to CodeX Academy</span>
+                            <span class="keyword">const</span> <span class="variable">mentor</span> = <span class="keyword">new</span> <span class="function">Nova</span>();
+                            <span class="keyword">const</span> <span class="variable">student</span> = <span class="keyword">await</span> <span class="function">enroll</span>({
+                            path: <span class="string">'Full-Stack Engineering'</span>,
+                            mode: <span class="string">'project-based'</span>
+                            });
+                            <span class="keyword">while</span> (<span class="variable">student</span>.<span class="function">isLearning</span>()) {
+                            <span class="variable">mentor</span>.<span class="function">guide</span>(<span class="variable">student</span>);
+                            }
+                            <span class="comment">// 🚀 Build your future.</span>
+                        </pre>
+                    </div>
+                    <!-- Floating badges -->
+                    <div class="floating-badge" style="top:-20px;right:-20px;">
+                        ⚡ AI Mentor <strong>Nova</strong>
+                    </div>
+                    <div class="floating-badge" style="bottom:-10px;left:-30px;">
+                        🛡️ Cyber Range
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+    FEATURES / CATEGORIES
+    ============================================================ -->
+    <section id="features">
+        <div class="container">
+            <div class="text-center">
+                <span class="section-label">Ecosystem</span>
+                <h2 class="section-title">Everything You Need to <span class="gradient-text">Succeed</span></h2>
+                <p class="section-subtitle mx-auto">
+                    From interactive labs to AI mentorship, CodeX Academy is a complete
+                    platform for learning, building, and launching your tech career.
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon">🧠</div>
+                    <h3>AI Mentor — Nova</h3>
+                    <p>Get real-time code reviews, debugging help, and personalized learning paths from your AI companion.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🛡️</div>
+                    <h3>Cyber Range</h3>
+                    <p>Practice ethical hacking in isolated labs. Capture flags, track scores, and compete on leaderboards.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">💻</div>
+                    <h3>Coding Playground</h3>
+                    <p>Write, run, and debug code in 8+ languages with live preview, terminal, and auto-save.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📜</div>
+                    <h3>Blockchain-Ready Certificates</h3>
+                    <p>Earn verifiable certificates with QR codes, unique IDs, and employer verification.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🤝</div>
+                    <h3>Community &amp; Mentorship</h3>
+                    <p>Join study groups, forums, live coding sessions, hackathons, and CTF competitions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🚀</div>
+                    <h3>Career Accelerator</h3>
+                    <p>Build your portfolio, optimize your LinkedIn, practice mock interviews, and land your dream job.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+    COURSES
+    ============================================================ -->
+    <section id="courses" style="background: var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+        <div class="container">
+            <div class="text-center">
+                <span class="section-label">Curriculum</span>
+                <h2 class="section-title">Popular <span class="gradient-text">Courses</span></h2>
+                <p class="section-subtitle mx-auto">
+                    Hand-crafted by industry experts. Project-based, practical, and designed
+                    for the real world.
+                </p>
+            </div>
+
+            <div class="courses-grid">
+                <div class="course-card">
+                    <div class="thumb" style="background:linear-gradient(135deg,#1a2744,#0a66ff);">
+                        🐍
+                        <span class="level">Beginner</span>
+                    </div>
+                    <div class="body">
+                        <h3>Python Mastery: From Zero to Pro</h3>
+                        <p>Build real-world applications, data pipelines, and automation scripts with Python.</p>
+                        <div class="meta">
+                            <span>📘 12 modules</span>
+                            <span class="price">Free</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card">
+                    <div class="thumb" style="background:linear-gradient(135deg,#1a2744,#00f58c);">
+                        🌐
+                        <span class="level">Intermediate</span>
+                    </div>
+                    <div class="body">
+                        <h3>Full-Stack Web Development</h3>
+                        <p>Next.js, React, Node.js, TypeScript, and PostgreSQL — build production-grade apps.</p>
+                        <div class="meta">
+                            <span>📘 16 modules</span>
+                            <span class="price">$49</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card">
+                    <div class="thumb" style="background:linear-gradient(135deg,#1a2744,#ff6b35);">
+                        🛡️
+                        <span class="level">Advanced</span>
+                    </div>
+                    <div class="body">
+                        <h3>Ethical Hacking &amp; Cyber Range</h3>
+                        <p>Hands-on labs, CTF challenges, and real-world penetration testing scenarios.</p>
+                        <div class="meta">
+                            <span>📘 14 modules</span>
+                            <span class="price">$79</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card">
+                    <div class="thumb" style="background:linear-gradient(135deg,#1a2744,#bd93f9);">
+                        🤖
+                        <span class="level">Intermediate</span>
+                    </div>
+                    <div class="body">
+                        <h3>Generative AI &amp; Prompt Engineering</h3>
+                        <p>Master LLMs, fine-tuning, RAG, and build AI-powered applications.</p>
+                        <div class="meta">
+                            <span>📘 10 modules</span>
+                            <span class="price">$59</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card">
+                    <div class="thumb" style="background:linear-gradient(135deg,#1a2744,#f1fa8c);">
+                        ☁️
+                        <span class="level">Intermediate</span>
+                    </div>
+                    <div class="body">
+                        <h3>Cloud Architecture (AWS, Azure, GCP)</h3>
+                        <p>Design scalable, secure cloud solutions with hands-on labs and real-world projects.</p>
+                        <div class="meta">
+                            <span>📘 14 modules</span>
+                            <span class="price">$69</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card">
+                    <div class="thumb" style="background:linear-gradient(135deg,#1a2744,#50fa7b);">
+                        🧩
+                        <span class="level">All Levels</span>
+                    </div>
+                    <div class="body">
+                        <h3>Data Science &amp; SQL Mastery</h3>
+                        <p>Analyze, visualize, and derive insights from data using Python, SQL, and Power BI.</p>
+                        <div class="meta">
+                            <span>📘 12 modules</span>
+                            <span class="price">$49</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center" style="margin-top:40px;">
+                <a href="#" class="btn btn-outline">View All Courses →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+    TESTIMONIALS
+    ============================================================ -->
+    <section id="testimonials">
+        <div class="container">
+            <div class="text-center">
+                <span class="section-label">Testimonials</span>
+                <h2 class="section-title">What Our <span class="gradient-text">Students Say</span></h2>
+                <p class="section-subtitle mx-auto">
+                    Real stories from real learners who transformed their careers with CodeX Academy.
+                </p>
+            </div>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <blockquote>
+                        “CodeX Academy completely changed my life. I went from being a
+                        self-taught coder to a full-stack engineer at a top fintech company.
+                        Nova, the AI mentor, was a game-changer.”
+                    </blockquote>
+                    <div class="author">
+                        <div class="avatar">AK</div>
+                        <div class="info">
+                            <strong>Amina K.</strong>
+                            <span>Full-Stack Engineer, Paystack</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <blockquote>
+                        “The cyber range labs are incredible. I earned my ethical hacking
+                        certification and landed a role as a security analyst within 3 months
+                        of completing the program.”
+                    </blockquote>
+                    <div class="author">
+                        <div class="avatar">JO</div>
+                        <div class="info">
+                            <strong>James O.</strong>
+                            <span>Security Analyst, Andela</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <blockquote>
+                        “I love the community and mentorship. The study groups and live coding
+                        sessions kept me motivated. I built my portfolio and got hired before
+                        I even graduated.”
+                    </blockquote>
+                    <div class="author">
+                        <div class="avatar">ZM</div>
+                        <div class="info">
+                            <strong>Zara M.</strong>
+                            <span>AI Engineer, Microsoft</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+    CTA
+    ============================================================ -->
+    <section id="cta">
+        <div class="container">
+            <div class="cta-section">
+                <h2>Ready to <span style="color:var(--secondary);">Build</span> Your Future?</h2>
+                <p>
+                    Join 50,000+ learners across Africa and the world. Start your free trial
+                    today — no credit card required.
+                </p>
+                <a href="#" class="btn btn-secondary btn-lg">Start Learning Free</a>
+                <p style="margin-top:16px;font-size:0.85rem;color:rgba(255,255,255,0.5);">
+                    🎓 14-day free trial · Cancel anytime
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+    FOOTER
+    ============================================================ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo" style="font-size:1.4rem;">
+                        <span class="logo-icon" style="width:36px;height:36px;font-size:1rem;">&lt;/&gt;</span>
+                        Code<span>X</span>
+                    </a>
+                    <p>
+                        Africa's leading technology academy. Learn, build, and succeed
+                        with project-based education, AI mentorship, and a community of
+                        innovators.
+                    </p>
+                    <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap;">
+                        <span style="padding:4px 14px;background:var(--surface);border-radius:50px;font-size:0.75rem;border:1px solid var(--border);">🌍 Lagos</span>
+                        <span style="padding:4px 14px;background:var(--surface);border-radius:50px;font-size:0.75rem;border:1px solid var(--border);">🚀 Remote</span>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="#">Courses</a></li>
+                        <li><a href="#">Learning Paths</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Scholarships</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="#">Forums</a></li>
+                        <li><a href="#">Events</a></li>
+                        <li><a href="#">Hackathons</a></li>
+                        <li><a href="#">Mentorship</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Partners</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>© 2026 CodeX Academy. All rights reserved.</span>
+                <div style="display:flex;gap:20px;flex-wrap:wrap;">
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="#">Cookies</a>
+                    <a href="#">Accessibility</a>
+                </div>
+                <div class="socials">
+                    <a href="#" aria-label="Twitter">🐦</a>
+                    <a href="#" aria-label="LinkedIn">🔗</a>
+                    <a href="#" aria-label="GitHub">🐙</a>
+                    <a href="#" aria-label="YouTube">▶️</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+    JAVASCRIPT
+    ============================================================ -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ----- Theme toggle -----
+            const themeToggle = document.getElementById('themeToggle');
+            let dark = true;
+
+            themeToggle.addEventListener('click', function() {
+                dark = !dark;
+                document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+                themeToggle.textContent = dark ? '🌙' : '☀️';
+                localStorage.setItem('theme', dark ? 'dark' : 'light');
+            });
+
+            // Restore theme
+            const saved = localStorage.getItem('theme');
+            if (saved === 'light') {
+                dark = false;
+                document.documentElement.setAttribute('data-theme', 'light');
+                themeToggle.textContent = '☀️';
+            }
+
+            // ----- Navbar scroll effect -----
+            const navbar = document.getElementById('navbar');
+            let lastScroll = 0;
+
+            window.addEventListener('scroll', function() {
+                const current = window.pageYOffset || document.documentElement.scrollTop;
+                if (current > 30) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+                lastScroll = current;
+            });
+
+            // ----- Mobile menu -----
+            const mobileBtn = document.getElementById('mobileMenuBtn');
+            const mobileNav = document.getElementById('mobileNav');
+            const mobileClose = document.getElementById('mobileCloseBtn');
+
+            function toggleMobile(open) {
+                if (open) {
+                    mobileNav.classList.add('open');
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    mobileNav.classList.remove('open');
+                    document.body.style.overflow = '';
+                }
+            }
+
+            mobileBtn.addEventListener('click', function() {
+                toggleMobile(true);
+            });
+            mobileClose.addEventListener('click', function() {
+                toggleMobile(false);
+            });
+            mobileNav.addEventListener('click', function(e) {
+                if (e.target === mobileNav) {
+                    toggleMobile(false);
+                }
+            });
+
+            // Close mobile on link click
+            mobileNav.querySelectorAll('a').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    toggleMobile(false);
+                });
+            });
+
+            // ----- Smooth anchor scroll -----
+            document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+                anchor.addEventListener('click', function(e) {
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        e.preventDefault();
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+
+        })();
+    </script>
+
+</body>
+</html>
